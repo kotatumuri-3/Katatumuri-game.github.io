@@ -5,8 +5,8 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0,
-    maximum-scale=1.0, user-scalable=no"
+    content="width=device-width, initial-scale=1,
+    maximum-scale=1, user-scalable=no"
   >
 
   <title>かたつむりゲーム☆</title>
@@ -14,7 +14,6 @@
   <style>
     * {
       box-sizing: border-box;
-      touch-action: none;
       user-select: none;
       -webkit-user-select: none;
     }
@@ -29,8 +28,7 @@
 
     body {
       color: #55c7e8;
-      font-family: system-ui, sans-serif;
-
+      font-family: system-ui, -apple-system, sans-serif;
       background:
         radial-gradient(
           circle at top,
@@ -45,6 +43,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
+      touch-action: none;
     }
 
     #space {
@@ -106,12 +105,10 @@
 
     .label {
       display: block;
-      color: #55c7e8;
       font-size: 12px;
     }
 
     .value {
-      color: #55c7e8;
       font-size: 23px;
     }
 
@@ -124,20 +121,12 @@
       width: 100px;
       height: 100px;
 
-      background-image:
-        url("player.png");
+      background-image: url("player.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
 
-      background-repeat:
-        no-repeat;
-
-      background-position:
-        center;
-
-      background-size:
-        contain;
-
-      transform:
-        translateX(-50%);
+      transform: translateX(-50%);
 
       filter:
         drop-shadow(
@@ -154,14 +143,9 @@
       width: 65px;
       height: 65px;
 
-      background-repeat:
-        no-repeat;
-
-      background-position:
-        center;
-
-      background-size:
-        contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
 
       will-change: transform;
 
@@ -173,18 +157,15 @@
     }
 
     .normal-target {
-      background-image:
-        url("target.png");
+      background-image: url("target.png");
     }
 
     .bonus-target {
-      background-image:
-        url("bonus.png");
+      background-image: url("bonus.png");
     }
 
     .bomb-target {
-      background-image:
-        url("bomb.png");
+      background-image: url("bomb.png");
     }
 
     .point-text {
@@ -197,39 +178,25 @@
 
       text-shadow:
         0 2px 0 white,
-        0 0 7px
-        rgba(48, 181, 220, 0.8);
+        0 0 7px rgba(48, 181, 220, 0.8);
 
       pointer-events: none;
-
-      animation:
-        float-up 0.8s forwards;
+      animation: float-up 0.8s forwards;
     }
 
     .point-text.bomb-point {
       color: #e53935;
-
-      text-shadow:
-        0 2px 0 white,
-        0 0 7px
-        rgba(229, 57, 53, 0.8);
     }
 
     @keyframes float-up {
       from {
         opacity: 1;
-
-        transform:
-          translateY(0)
-          scale(1);
+        transform: translateY(0) scale(1);
       }
 
       to {
         opacity: 0;
-
-        transform:
-          translateY(-70px)
-          scale(1.3);
+        transform: translateY(-70px) scale(1.3);
       }
     }
 
@@ -251,12 +218,12 @@
     .card {
       width: min(520px, 92vw);
       max-height: 90vh;
-      padding: 24px;
 
+      padding: 24px;
       overflow-y: auto;
-      text-align: center;
 
       color: #55c7e8;
+      text-align: center;
 
       border:
         1px solid
@@ -270,27 +237,24 @@
           rgba(255, 253, 231, 0.98),
           rgba(255, 241, 161, 0.98)
         );
+
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
     }
 
     h1 {
       margin: 0 0 10px;
-
       color: #55c7e8;
-
-      font-size:
-        clamp(30px, 7vw, 52px);
+      font-size: clamp(30px, 7vw, 52px);
     }
 
     p {
-      color: #55c7e8;
       line-height: 1.6;
     }
 
     .rules {
       margin: 16px 0;
       padding: 12px;
-
-      color: #55c7e8;
 
       border-radius: 16px;
 
@@ -305,14 +269,11 @@
 
       gap: 12px;
       margin: 8px 0;
-
-      color: #55c7e8;
     }
 
     .rule-item img {
       width: 48px;
       height: 48px;
-
       object-fit: contain;
     }
 
@@ -325,10 +286,7 @@
       color: #e53935;
       font-size: 13px;
 
-      border:
-        1px solid
-        #e53935;
-
+      border: 1px solid #e53935;
       border-radius: 10px;
 
       background:
@@ -361,24 +319,17 @@
       transform: scale(0.97);
     }
 
-    /* 終了画面 */
-
     #end-screen {
       display: none;
 
       background:
         rgba(255, 244, 173, 0.82);
 
-      backdrop-filter:
-        blur(5px);
-
-      -webkit-backdrop-filter:
-        blur(5px);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
     }
 
     .end-card {
-      position: relative;
-
       width: min(460px, 92vw);
       padding: 30px 24px;
 
@@ -431,23 +382,15 @@
       display: block;
       margin-bottom: 3px;
 
-      color: #55c7e8;
       font-size: 14px;
       font-weight: bold;
     }
 
     #final-score {
       color: #35b5da;
-
-      font-size:
-        clamp(44px, 12vw, 64px);
-
+      font-size: clamp(44px, 12vw, 64px);
       font-weight: 900;
       line-height: 1.1;
-
-      text-shadow:
-        0 3px 0
-        rgba(255, 255, 255, 0.9);
     }
 
     #message {
@@ -510,10 +453,6 @@
           #72f1ff,
           #ffe866
         );
-
-      box-shadow:
-        0 7px 16px
-        rgba(85, 199, 232, 0.24);
     }
 
     .secondary-button {
@@ -527,82 +466,296 @@
         rgba(255, 255, 255, 0.82);
     }
 
+    /* ランキング全画面UI */
+
     #ranking-area {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+
       display: none;
+      align-items: center;
+      justify-content: center;
 
-      margin-top: 20px;
-      padding: 16px;
+      padding:
+        max(18px, env(safe-area-inset-top))
+        18px
+        max(18px, env(safe-area-inset-bottom));
 
-      text-align: left;
+      background:
+        rgba(255, 244, 173, 0.92);
+
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+
+      touch-action: pan-y !important;
+    }
+
+    #ranking-area.is-open {
+      display: flex;
+    }
+
+    .ranking-card {
+      position: relative;
+
+      display: flex;
+      flex-direction: column;
+
+      width: min(500px, 94vw);
+      height: min(760px, 88vh);
+      height: min(760px, 88dvh);
+
+      min-height: 0;
+      overflow: hidden;
+
+      border:
+        2px solid
+        rgba(85, 199, 232, 0.65);
+
+      border-radius: 28px;
+
+      background:
+        linear-gradient(
+          160deg,
+          #ffffff,
+          #fff9c8
+        );
+
+      box-shadow:
+        0 22px 60px
+        rgba(36, 153, 188, 0.28);
+
+      touch-action: pan-y !important;
+    }
+
+    .ranking-hero {
+      flex: 0 0 auto;
+
+      padding: 22px 22px 16px;
+
+      color: white;
+      text-align: center;
+
+      background:
+        linear-gradient(
+          135deg,
+          #55c7e8,
+          #27a8d0
+        );
+    }
+
+    .ranking-kicker {
+      display: block;
+      margin-bottom: 3px;
+
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+
+      opacity: 0.88;
+    }
+
+    .ranking-hero h2 {
+      margin: 0;
+
+      color: white;
+      font-size: clamp(28px, 7vw, 38px);
+      line-height: 1.15;
+    }
+
+    .ranking-hero p {
+      margin: 7px 0 0;
+
+      color:
+        rgba(255, 255, 255, 0.9);
+
+      font-size: 13px;
+    }
+
+    #ranking-close-button {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 2;
+
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      padding: 0;
+
+      color: #1688ac;
+      font-size: 25px;
+      line-height: 1;
+
+      border:
+        2px solid
+        rgba(255, 255, 255, 0.86);
+
+      border-radius: 50%;
+
+      background:
+        rgba(255, 255, 255, 0.94);
+
+      box-shadow:
+        0 4px 12px
+        rgba(0, 0, 0, 0.12);
+    }
+
+    #ranking-podium {
+      flex: 0 0 auto;
+
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 8px;
+      padding: 14px 14px 8px;
+
+      background:
+        rgba(255, 255, 255, 0.55);
+    }
+
+    .podium-item {
+      min-width: 0;
+      padding: 12px 6px 10px;
+
+      text-align: center;
 
       border:
         1px solid
-        rgba(85, 199, 232, 0.4);
+        rgba(85, 199, 232, 0.25);
 
-      border-radius: 18px;
+      border-radius: 16px;
 
       background:
-        rgba(255, 255, 255, 0.78);
+        rgba(255, 255, 255, 0.9);
     }
 
-    .ranking-header {
+    .podium-item.first {
+      border-color:
+        rgba(255, 183, 0, 0.55);
+
+      background:
+        linear-gradient(
+          160deg,
+          #fff7b8,
+          #ffffff
+        );
+
+      transform: translateY(-4px);
+    }
+
+    .podium-rank {
+      display: block;
+      font-size: 23px;
+    }
+
+    .podium-score {
+      display: block;
+      margin-top: 7px;
+
+      color: #219bbf;
+      font-size: clamp(19px, 5vw, 25px);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .podium-date {
+      display: block;
+      margin-top: 4px;
+      overflow: hidden;
+
+      color: #6d9eab;
+      font-size: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ranking-list-label {
+      flex: 0 0 auto;
+
       display: flex;
-      align-items: center;
       justify-content: space-between;
 
-      padding-bottom: 10px;
+      padding: 10px 18px 7px;
 
-      border-bottom:
-        1px solid
-        rgba(85, 199, 232, 0.25);
-    }
-
-    .ranking-header h2 {
-      margin: 0;
-
-      color: #35b5da;
-      font-size: 22px;
-    }
-
-    .ranking-header span {
-      color: #e6a700;
+      color: #4a9db5;
       font-size: 12px;
       font-weight: 900;
     }
 
     #ranking-list {
-      margin: 12px 0 0;
-      padding-left: 32px;
+      flex: 1 1 auto;
+      min-height: 0;
+
+      margin: 0;
+      padding: 0 14px 18px;
+
+      overflow-x: hidden;
+      overflow-y: scroll;
+
+      list-style: none;
+
+      overscroll-behavior-y: contain;
+      touch-action: pan-y !important;
+      -webkit-overflow-scrolling: touch;
     }
 
     #ranking-list li {
-      margin: 8px 0;
-      padding: 7px 10px;
+      display: grid;
+      grid-template-columns:
+        46px 1fr auto;
 
-      color: #379fbd;
-      font-size: 17px;
-      font-weight: bold;
+      align-items: center;
 
-      border-radius: 10px;
+      gap: 9px;
+      min-height: 55px;
+
+      margin: 7px 0;
+      padding: 8px 12px;
+
+      border:
+        1px solid
+        rgba(85, 199, 232, 0.24);
+
+      border-radius: 15px;
 
       background:
-        rgba(238, 251, 255, 0.75);
+        rgba(255, 255, 255, 0.9);
+
+      touch-action: pan-y !important;
     }
 
-    #ranking-list li:first-child {
-      color: #a97900;
+    .ranking-number {
+      color: #74b6c9;
+      font-size: 17px;
+      font-weight: 900;
+      text-align: center;
+    }
 
-      background:
-        rgba(255, 240, 145, 0.62);
+    .ranking-score {
+      color: #249abc;
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .ranking-date {
+      color: #7aa6b2;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .ranking-empty {
+      display: block !important;
+      padding: 28px 12px !important;
+
+      color: #6da4b3 !important;
+      text-align: center;
     }
 
     @media (max-height: 700px) {
       .end-card {
         padding: 20px;
-      }
-
-      .end-card h1 {
-        margin-bottom: 12px;
       }
 
       .score-result {
@@ -615,9 +768,26 @@
         padding: 9px 12px;
       }
 
-      .end-menu button {
-        min-height: 48px;
-        padding: 10px 20px;
+      .ranking-card {
+        height: 94vh;
+        height: 94dvh;
+      }
+
+      .ranking-hero {
+        padding: 14px 18px 11px;
+      }
+
+      .ranking-hero p,
+      .ranking-kicker {
+        display: none;
+      }
+
+      #ranking-podium {
+        padding-top: 10px;
+      }
+
+      .podium-item {
+        padding: 8px 5px;
       }
     }
   </style>
@@ -625,27 +795,16 @@
 
 <body>
   <main id="game">
-
     <div id="space"></div>
 
     <div id="header">
       <div class="panel">
-        <span class="label">
-          スコア
-        </span>
-
-        <span
-          class="value"
-          id="score"
-        >
-          0
-        </span>
+        <span class="label">スコア</span>
+        <span class="value" id="score">0</span>
       </div>
 
       <div class="panel">
-        <span class="label">
-          残り時間
-        </span>
+        <span class="label">残り時間</span>
 
         <span class="value">
           <span id="time">30</span>秒
@@ -655,21 +814,17 @@
 
     <div id="player"></div>
 
-    <!-- 開始画面 -->
     <section
       id="start-screen"
       class="overlay"
     >
       <div class="card">
-
-        <h1>
-          かたつむりゲーム☆
-        </h1>
+        <h1>かたつむりゲーム☆</h1>
 
         <p>
-          指でプレイヤーを左右に動かして、
-          落ちてくるかたつむりたちを集めよう！
-　　　　　　爆弾は避けてね！
+          指でプレイヤーを左右に動かして、<br>
+          落ちてくるかたつむりたちを集めよう！<br>
+          爆弾は避けてね！
         </p>
 
         <div id="image-error">
@@ -678,40 +833,32 @@
         </div>
 
         <div class="rules">
-
           <div class="rule-item">
             <img
               src="target.png"
-              alt="通常の的"
+              alt="通常のかたつむり"
             >
 
-            <span>
-              かたつむり：1点
-            </span>
+            <span>かたつむり：1点</span>
           </div>
 
           <div class="rule-item">
             <img
               src="bonus.png"
-              alt="ボーナス"
+              alt="ボーナスかたつむり"
             >
 
-            <span>
-              こたつむり：3点
-            </span>
+            <span>こたつむり：3点</span>
           </div>
 
           <div class="rule-item">
             <img
               src="bomb.png"
-              alt="ボム"
+              alt="爆弾"
             >
 
-            <span>
-              爆弾：-2点
-            </span>
+            <span>爆弾：-2点</span>
           </div>
-
         </div>
 
         <button
@@ -720,34 +867,25 @@
         >
           ゲーム開始☆
         </button>
-
       </div>
     </section>
 
-    <!-- 終了画面 -->
     <section
       id="end-screen"
       class="overlay"
       aria-labelledby="end-title"
     >
       <div class="card end-card">
+        <p class="end-label">ゲームオーバー</p>
 
-        <p class="end-label">
-          ゲームオーバー
-        </p>
-
-        <h1 id="end-title">
-          タイムアップ！
-        </h1>
+        <h1 id="end-title">タイムアップ！</h1>
 
         <div class="score-result">
           <span class="score-result-label">
             最終スコア
           </span>
 
-          <div id="final-score">
-            0点
-          </div>
+          <div id="final-score">0点</div>
         </div>
 
         <p id="message"></p>
@@ -761,7 +899,6 @@
         </div>
 
         <div class="end-menu">
-
           <button
             id="retry-button"
             class="primary-button"
@@ -777,37 +914,59 @@
             aria-expanded="false"
             aria-controls="ranking-area"
           >
-            ランキングを見る(縦画面)
+            ランキングを見る
           </button>
-
         </div>
-
-        <div
-          id="ranking-area"
-          aria-hidden="true"
-        >
-          <div class="ranking-header">
-
-            <h2>
-              ランキング
-            </h2>
-
-            <span>
-              TOP 10
-            </span>
-
-          </div>
-
-          <ol id="ranking-list"></ol>
-        </div>
-
       </div>
     </section>
 
+    <div
+      id="ranking-area"
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ranking-title"
+    >
+      <div class="ranking-card">
+        <button
+          id="ranking-close-button"
+          type="button"
+          aria-label="ランキングを閉じる"
+        >
+          ×
+        </button>
+
+        <div class="ranking-hero">
+          <span class="ranking-kicker">
+            BEST RECORDS
+          </span>
+
+          <h2 id="ranking-title">
+            ランキング
+          </h2>
+
+          <p>上位10件のスコア</p>
+        </div>
+
+        <div
+          id="ranking-podium"
+          aria-label="上位3件"
+        ></div>
+
+        <div class="ranking-list-label">
+          <span>順位・スコア</span>
+          <span>プレイ日</span>
+        </div>
+
+        <ol
+          id="ranking-list"
+          tabindex="0"
+          aria-label="4位以下のランキング一覧"
+        ></ol>
+      </div>
+    </div>
   </main>
 
-  <!-- 特典設定を読み込む -->
-  <script src="ranking-data.js"></script>
   <script src="rewards.js"></script>
 
   <script>
@@ -824,59 +983,43 @@
       document.getElementById("time");
 
     const startScreen =
-      document.getElementById(
-        "start-screen"
-      );
+      document.getElementById("start-screen");
 
     const endScreen =
-      document.getElementById(
-        "end-screen"
-      );
+      document.getElementById("end-screen");
 
     const finalScoreElement =
-      document.getElementById(
-        "final-score"
-      );
+      document.getElementById("final-score");
 
     const messageElement =
-      document.getElementById(
-        "message"
-      );
+      document.getElementById("message");
 
     const rewardElement =
-      document.getElementById(
-        "reward"
-      );
+      document.getElementById("reward");
 
     const rankingButton =
-      document.getElementById(
-        "ranking-button"
-      );
+      document.getElementById("ranking-button");
 
     const rankingArea =
-      document.getElementById(
-        "ranking-area"
-      );
+      document.getElementById("ranking-area");
 
     const rankingList =
-      document.getElementById(
-        "ranking-list"
-      );
+      document.getElementById("ranking-list");
+
+    const rankingPodium =
+      document.getElementById("ranking-podium");
+
+    const rankingCloseButton =
+      document.getElementById("ranking-close-button");
 
     const imageError =
-      document.getElementById(
-        "image-error"
-      );
+      document.getElementById("image-error");
 
     const startButton =
-      document.getElementById(
-        "start-button"
-      );
+      document.getElementById("start-button");
 
     const retryButton =
-      document.getElementById(
-        "retry-button"
-      );
+      document.getElementById("retry-button");
 
     const rankingStorageKey =
       "imageCatchGameRanking";
@@ -891,6 +1034,8 @@
     let animationId;
     let previousTime = 0;
 
+    let fileRanking = [];
+
     const imageFiles = [
       "player.png",
       "target.png",
@@ -898,10 +1043,46 @@
       "bomb.png"
     ];
 
+    async function loadRankingData() {
+      try {
+        const response =
+          await fetch(
+            "scores.json?updated=" + Date.now(),
+            {
+              cache: "no-store"
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            "scores.json: " + response.status
+          );
+        }
+
+        const data =
+          await response.json();
+
+        fileRanking =
+          Array.isArray(data)
+            ? data
+            : [];
+      }
+      catch (error) {
+        console.warn(
+          "scores.jsonを読み込めませんでした。",
+          error
+        );
+
+        fileRanking = [];
+      }
+    }
+
     function checkImages() {
-      for (const fileName of imageFiles) {
-        const image =
-          new Image();
+      for (
+        const fileName
+        of imageFiles
+      ) {
+        const image = new Image();
 
         image.onerror =
           function () {
@@ -915,8 +1096,6 @@
           Date.now();
       }
     }
-
-    checkImages();
 
     function movePlayer(clientX) {
       if (!playing) {
@@ -936,8 +1115,7 @@
         Math.max(
           halfWidth,
           Math.min(
-            gameRect.width -
-              halfWidth,
+            gameRect.width - halfWidth,
             newPosition
           )
         );
@@ -989,10 +1167,7 @@
         pointValue = -2;
         speed += 35;
       }
-
-      else if (
-        randomNumber < 0.28
-      ) {
+      else if (randomNumber < 0.28) {
         targetClass =
           "bonus-target";
 
@@ -1001,13 +1176,10 @@
       }
 
       const element =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       element.className =
-        "falling " +
-        targetClass;
+        "falling " + targetClass;
 
       const targetSize = 65;
 
@@ -1045,14 +1217,10 @@
       second
     ) {
       return !(
-        first.right <
-          second.left ||
-        first.left >
-          second.right ||
-        first.bottom <
-          second.top ||
-        first.top >
-          second.bottom
+        first.right < second.left ||
+        first.left > second.right ||
+        first.bottom < second.top ||
+        first.top > second.bottom
       );
     }
 
@@ -1062,20 +1230,15 @@
       value
     ) {
       const text =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       text.className =
         value < 0
           ? "point-text bomb-point"
           : "point-text";
 
-      text.style.left =
-        x + "px";
-
-      text.style.top =
-        y + "px";
+      text.style.left = x + "px";
+      text.style.top = y + "px";
 
       text.textContent =
         value > 0
@@ -1111,14 +1274,14 @@
           0.04
         );
 
-      previousTime =
-        currentTime;
+      previousTime = currentTime;
 
       const playerRect =
         player.getBoundingClientRect();
 
       for (
-        const object of objects
+        const object
+        of objects
       ) {
         if (object.removed) {
           continue;
@@ -1128,11 +1291,10 @@
           object.speed *
           elapsedTime;
 
-        object.element
-          .style.transform =
-            "translateY(" +
-            object.y +
-            "px)";
+        object.element.style.transform =
+          "translateY(" +
+          object.y +
+          "px)";
 
         const objectRect =
           object.element
@@ -1147,8 +1309,7 @@
           score =
             Math.max(
               0,
-              score +
-                object.value
+              score + object.value
             );
 
           scoreElement.textContent =
@@ -1162,7 +1323,6 @@
 
           removeObject(object);
         }
-
         else if (
           objectRect.top >
           game.clientHeight + 20
@@ -1179,98 +1339,107 @@
         );
 
       animationId =
-        requestAnimationFrame(
-          update
-        );
+        requestAnimationFrame(update);
     }
 
-    function getRanking() {
-      const fileRanking =
-        typeof RANKING_DATA !== "undefined" &&
-        Array.isArray(RANKING_DATA)
-          ? RANKING_DATA
-          : [];
-
-      let playedRanking = [];
-
+    function getPlayedRanking() {
       try {
         const savedRanking =
           localStorage.getItem(
             rankingStorageKey
           );
 
-        if (savedRanking) {
-          const parsedRanking =
-            JSON.parse(savedRanking);
-
-          if (Array.isArray(parsedRanking)) {
-            playedRanking = parsedRanking;
-          }
+        if (!savedRanking) {
+          return [];
         }
+
+        const parsedRanking =
+          JSON.parse(savedRanking);
+
+        return Array.isArray(
+          parsedRanking
+        )
+          ? parsedRanking
+          : [];
       }
       catch (error) {
         console.warn(
           "プレイ記録を読み込めませんでした。",
           error
         );
-      }
 
+        return [];
+      }
+    }
+
+    function getRanking() {
       return fileRanking
-        .concat(playedRanking)
-        .map(function (record) {
-          return {
-            score: Math.max(
-              0,
-              Math.floor(Number(record.score) || 0)
-            ),
-            playedAt:
-              String(record.playedAt || "")
-          };
-        })
-        .sort(function (first, second) {
-          return second.score - first.score;
-        })
+        .concat(
+          getPlayedRanking()
+        )
+        .map(
+          function (record) {
+            return {
+              score:
+                Math.max(
+                  0,
+                  Math.floor(
+                    Number(record.score) || 0
+                  )
+                ),
+
+              playedAt:
+                String(
+                  record.playedAt || ""
+                )
+            };
+          }
+        )
+        .sort(
+          function (
+            first,
+            second
+          ) {
+            return (
+              second.score -
+              first.score
+            );
+          }
+        )
         .slice(0, 10);
     }
 
-    function saveRanking(
-      newScore
-    ) {
-      let playedRanking = [];
+    function saveRanking(newScore) {
+      const ranking =
+        getPlayedRanking();
 
-      try {
-        const savedRanking =
-          localStorage.getItem(
-            rankingStorageKey
-          );
+      ranking.push({
+        score: newScore,
 
-        if (savedRanking) {
-          const parsedRanking =
-            JSON.parse(savedRanking);
-
-          if (Array.isArray(parsedRanking)) {
-            playedRanking = parsedRanking;
-          }
-        }
-
-        playedRanking.push({
-          score: newScore,
-          playedAt:
-            new Date().toLocaleDateString(
+        playedAt:
+          new Date()
+            .toLocaleDateString(
               "ja-JP"
             )
-        });
+      });
 
-        playedRanking.sort(
-          function (first, second) {
-            return second.score - first.score;
-          }
-        );
+      ranking.sort(
+        function (
+          first,
+          second
+        ) {
+          return (
+            second.score -
+            first.score
+          );
+        }
+      );
 
+      try {
         localStorage.setItem(
           rankingStorageKey,
           JSON.stringify(
-            playedRanking.slice(0, 10)
+            ranking.slice(0, 10)
           )
         );
       }
@@ -1283,22 +1452,85 @@
     }
 
     function renderRanking() {
-      const ranking =
-        getRanking();
+      const ranking = getRanking();
 
-      rankingList.innerHTML =
-        "";
+      const medals = [
+        "🥇",
+        "🥈",
+        "🥉"
+      ];
 
-      if (
-        ranking.length === 0
+      rankingPodium.innerHTML = "";
+      rankingList.innerHTML = "";
+
+      for (
+        let index = 0;
+        index < 3;
+        index += 1
       ) {
-        const emptyItem =
-          document.createElement(
-            "li"
+        const record =
+          ranking[index];
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "podium-item" +
+          (
+            index === 0
+              ? " first"
+              : ""
           );
 
+        const rank =
+          document.createElement("span");
+
+        rank.className =
+          "podium-rank";
+
+        rank.textContent =
+          medals[index];
+
+        const scoreText =
+          document.createElement("span");
+
+        scoreText.className =
+          "podium-score";
+
+        scoreText.textContent =
+          record
+            ? record.score + "点"
+            : "---";
+
+        const dateText =
+          document.createElement("span");
+
+        dateText.className =
+          "podium-date";
+
+        dateText.textContent =
+          record
+            ? record.playedAt
+            : "記録なし";
+
+        item.appendChild(rank);
+        item.appendChild(scoreText);
+        item.appendChild(dateText);
+
+        rankingPodium.appendChild(item);
+      }
+
+      if (ranking.length <= 3) {
+        const emptyItem =
+          document.createElement("li");
+
+        emptyItem.className =
+          "ranking-empty";
+
         emptyItem.textContent =
-          "まだ記録がありません";
+          ranking.length === 0
+            ? "まだ記録がありません"
+            : "4位以下の記録はありません";
 
         rankingList.appendChild(
           emptyItem
@@ -1307,39 +1539,59 @@
         return;
       }
 
-      ranking.forEach(
-        function (
-          record,
-          index
-        ) {
-          const item =
-            document.createElement(
-              "li"
-            );
+      ranking
+        .slice(3)
+        .forEach(
+          function (
+            record,
+            offset
+          ) {
+            const position =
+              offset + 4;
 
-          item.textContent =
-            record.score +
-            "点　" +
-            record.playedAt;
+            const item =
+              document.createElement("li");
 
-          item.setAttribute(
-            "aria-label",
-            (index + 1) +
-              "位、" +
-              record.score +
-              "点"
-          );
+            const rankText =
+              document.createElement("span");
 
-          rankingList.appendChild(
-            item
-          );
-        }
-      );
+            rankText.className =
+              "ranking-number";
+
+            rankText.textContent =
+              position + "位";
+
+            const scoreText =
+              document.createElement("span");
+
+            scoreText.className =
+              "ranking-score";
+
+            scoreText.textContent =
+              record.score + "点";
+
+            const dateText =
+              document.createElement("span");
+
+            dateText.className =
+              "ranking-date";
+
+            dateText.textContent =
+              record.playedAt;
+
+            item.appendChild(rankText);
+            item.appendChild(scoreText);
+            item.appendChild(dateText);
+
+            rankingList.appendChild(item);
+          }
+        );
     }
 
     function closeRanking() {
-      rankingArea.style.display =
-        "none";
+      rankingArea.classList.remove(
+        "is-open"
+      );
 
       rankingArea.setAttribute(
         "aria-hidden",
@@ -1350,27 +1602,16 @@
         "aria-expanded",
         "false"
       );
-
-      rankingButton.textContent =
-        "ランキングを見る";
     }
 
-    function toggleRanking() {
-      const isOpen =
-        rankingArea
-          .getAttribute(
-            "aria-hidden"
-          ) === "false";
-
-      if (isOpen) {
-        closeRanking();
-        return;
-      }
-
+    function openRanking() {
       renderRanking();
 
-      rankingArea.style.display =
-        "block";
+      rankingList.scrollTop = 0;
+
+      rankingArea.classList.add(
+        "is-open"
+      );
 
       rankingArea.setAttribute(
         "aria-hidden",
@@ -1382,8 +1623,7 @@
         "true"
       );
 
-      rankingButton.textContent =
-        "ランキングを閉じる";
+      rankingCloseButton.focus();
     }
 
     function startGame() {
@@ -1395,7 +1635,8 @@
       );
 
       for (
-        const object of objects
+        const object
+        of objects
       ) {
         object.element.remove();
       }
@@ -1404,14 +1645,9 @@
       score = 0;
       timeLeft = 30;
 
-      scoreElement.textContent =
-        "0";
-
-      timeElement.textContent =
-        "30";
-
-      player.style.left =
-        "50%";
+      scoreElement.textContent = "0";
+      timeElement.textContent = "30";
+      player.style.left = "50%";
 
       startScreen.style.display =
         "none";
@@ -1421,11 +1657,8 @@
 
       closeRanking();
 
-      rewardElement.textContent =
-        "";
-
-      messageElement.textContent =
-        "";
+      rewardElement.textContent = "";
+      messageElement.textContent = "";
 
       playing = true;
 
@@ -1460,9 +1693,7 @@
         );
 
       animationId =
-        requestAnimationFrame(
-          update
-        );
+        requestAnimationFrame(update);
     }
 
     function finishGame() {
@@ -1480,7 +1711,8 @@
       );
 
       for (
-        const object of objects
+        const object
+        of objects
       ) {
         object.element.remove();
       }
@@ -1491,10 +1723,8 @@
         score + "点";
 
       let rewardData = {
-        message:
-          "ゲーム終了！",
-        reward:
-          "参加特典"
+        message: "ゲーム終了！",
+        reward: "参加特典"
       };
 
       if (
@@ -1534,8 +1764,52 @@
 
     rankingButton.addEventListener(
       "click",
-      toggleRanking
+      openRanking
     );
+
+    rankingCloseButton.addEventListener(
+      "click",
+      closeRanking
+    );
+
+    rankingArea.addEventListener(
+      "click",
+      function (event) {
+        if (
+          event.target ===
+          rankingArea
+        ) {
+          closeRanking();
+        }
+      }
+    );
+
+    rankingArea.addEventListener(
+      "pointerdown",
+      function (event) {
+        event.stopPropagation();
+      }
+    );
+
+    rankingArea.addEventListener(
+      "pointermove",
+      function (event) {
+        event.stopPropagation();
+      }
+    );
+
+    rankingArea.addEventListener(
+      "touchmove",
+      function (event) {
+        event.stopPropagation();
+      },
+      {
+        passive: true
+      }
+    );
+
+    checkImages();
+    loadRankingData();
   </script>
 </body>
 </html>

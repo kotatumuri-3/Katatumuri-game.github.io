@@ -501,6 +501,18 @@
       font-weight: 900;
     }
 
+    #sync-status {
+      min-height: 1.4em;
+      margin: 8px 0 12px;
+      color: #4a9db5;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    #sync-status.error {
+      color: #d43838;
+    }
+
     .end-menu {
       display: grid;
       gap: 12px;
@@ -978,6 +990,8 @@
           <p id="reward"></p>
         </div>
 
+        <p id="sync-status" aria-live="polite"></p>
+
         <div class="end-menu">
           <button
             id="retry-button"
@@ -1049,7 +1063,39 @@
 
   <script src="rewards.js"></script>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import {
+      getAuth,
+      signInAnonymously,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import {
+      getDatabase,
+      ref,
+      get,
+      set,
+      onValue,
+      query,
+      orderByChild,
+      limitToLast
+    } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD2OPkwanJDOFc9HgQV_5cdFCMvgiF3IaA",
+      authDomain: "katatumuri-game.firebaseapp.com",
+      databaseURL: "https://katatumuri-game-default-rtdb.firebaseio.com",
+      projectId: "katatumuri-game",
+      storageBucket: "katatumuri-game.firebasestorage.app",
+      messagingSenderId: "223594768335",
+      appId: "1:223594768335:web:680d1ce6abe02d357d54ba",
+      measurementId: "G-ZBF98Q1RQ9"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const firebaseAuth = getAuth(firebaseApp);
+    const firebaseDatabase = getDatabase(firebaseApp);
+
     const game =
       document.getElementById("game");
 
@@ -1106,9 +1152,9 @@
 
     const nameError =
       document.getElementById("name-error");
+    const syncStatus =
+      document.getElementById("sync-status");
 
-    const rankingStorageKey =
-      "imageCatchGameRanking";
 
     let score = 0;
     let timeLeft = 30;
@@ -1130,38 +1176,74 @@
       "bomb.png"
     ];
 
-    async function loadRankingData() {
+    let signedInUser = null;
+    let resolveAuthReady;
+
+    const authReady =
+      new Promise(function (resolve) {
+        resolveAuthReady = resolve;
+      });
+
+    function setSyncStatus(message, isError) {
+      syncStatus.textContent = message;
+      syncStatus.classList.toggle("error", Boolean(isError));
+    }
+
+    async function initializeSharedRanking() {
+      onAuthStateChanged(
+        firebaseAuth,
+        function (user) {
+          if (user) {
+            signedInUser = user;
+            resolveAuthReady(user);
+          }
+        }
+      );
+
       try {
-        const response =
-          await fetch(
-            "scores.json?updated=" + Date.now(),
-            {
-              cache: "no-store"
+        if (!firebaseAuth.currentUser) {
+          await signInAnonymously(firebaseAuth);
+        }
+      }
+      catch (error) {
+        console.error("匿名認証に失敗しました。", error);
+        setSyncStatus("ランキング接続に失敗しました。", true);
+        resolveAuthReady(null);
+      }
+
+      const scoresQuery = query(
+        ref(firebaseDatabase, "scores"),
+        orderByChild("score"),
+        limitToLast(10)
+      );
+
+      onValue(
+        scoresQuery,
+        function (snapshot) {
+          const ranking = [];
+
+          snapshot.forEach(function (childSnapshot) {
+            const record = childSnapshot.val();
+            if (record) {
+              ranking.push(record);
+            }
+          });
+
+          fileRanking = ranking.sort(
+            function (first, second) {
+              return Number(second.score || 0) - Number(first.score || 0);
             }
           );
 
-        if (!response.ok) {
-          throw new Error(
-            "scores.json: " + response.status
-          );
+          if (rankingArea.classList.contains("is-open")) {
+            renderRanking();
+          }
+        },
+        function (error) {
+          console.error("ランキング取得に失敗しました。", error);
+          setSyncStatus("ランキングを取得できませんでした。", true);
         }
-
-        const data =
-          await response.json();
-
-        fileRanking =
-          Array.isArray(data)
-            ? data
-            : [];
-      }
-      catch (error) {
-        console.warn(
-          "scores.jsonを読み込めませんでした。",
-          error
-        );
-
-        fileRanking = [];
-      }
+      );
     }
 
     function checkImages() {
@@ -1429,118 +1511,65 @@
         requestAnimationFrame(update);
     }
 
-    function getPlayedRanking() {
-      try {
-        const savedRanking =
-          localStorage.getItem(
-            rankingStorageKey
-          );
-
-        if (!savedRanking) {
-          return [];
-        }
-
-        const parsedRanking =
-          JSON.parse(savedRanking);
-
-        return Array.isArray(
-          parsedRanking
-        )
-          ? parsedRanking
-          : [];
-      }
-      catch (error) {
-        console.warn(
-          "プレイ記録を読み込めませんでした。",
-          error
-        );
-
-        return [];
-      }
-    }
-
     function getRanking() {
       return fileRanking
-        .concat(
-          getPlayedRanking()
-        )
-        .map(
-          function (record) {
-            return {
-              score:
-                Math.max(
-                  0,
-                  Math.floor(
-                    Number(record.score) || 0
-                  )
-                ),
-
-              name:
-                String(
-                  record.name || "ななし"
-                ).slice(0, 12),
-
-              playedAt:
-                String(
-                  record.playedAt || ""
-                )
-            };
-          }
-        )
-        .sort(
-          function (
-            first,
-            second
-          ) {
-            return (
-              second.score -
-              first.score
-            );
-          }
-        )
+        .map(function (record) {
+          return {
+            score: Math.max(
+              0,
+              Math.floor(Number(record.score) || 0)
+            ),
+            name: String(record.name || "ななし").slice(0, 12),
+            playedAt: String(record.playedAt || "")
+          };
+        })
+        .sort(function (first, second) {
+          return second.score - first.score;
+        })
         .slice(0, 10);
     }
 
-    function saveRanking(newScore) {
-      const ranking =
-        getPlayedRanking();
-
-      ranking.push({
-        name: currentPlayerName || "ななし",
-        score: newScore,
-
-        playedAt:
-          new Date()
-            .toLocaleDateString(
-              "ja-JP"
-            )
-      });
-
-      ranking.sort(
-        function (
-          first,
-          second
-        ) {
-          return (
-            second.score -
-            first.score
-          );
-        }
-      );
+    async function saveRanking(newScore) {
+      setSyncStatus("ランキングへ保存中…", false);
 
       try {
-        localStorage.setItem(
-          rankingStorageKey,
-          JSON.stringify(
-            ranking.slice(0, 10)
-          )
+        const user = signedInUser || await authReady;
+
+        if (!user) {
+          throw new Error("認証ユーザーを取得できませんでした。");
+        }
+
+        const scoreReference = ref(
+          firebaseDatabase,
+          "scores/" + user.uid
         );
+
+        const currentSnapshot = await get(scoreReference);
+        const currentRecord = currentSnapshot.val();
+        const currentBest = currentRecord
+          ? Number(currentRecord.score || 0)
+          : -1;
+
+        if (newScore <= currentBest) {
+          setSyncStatus(
+            "自己ベスト " + currentBest + "点を保持しました。",
+            false
+          );
+          return;
+        }
+
+        await set(scoreReference, {
+          name: currentPlayerName || "ななし",
+          score: newScore,
+          playedAt: new Date().toLocaleDateString("ja-JP"),
+          updatedAt: Date.now()
+        });
+
+        setSyncStatus("共有ランキングへ保存しました。", false);
       }
       catch (error) {
-        console.warn(
-          "プレイ記録を保存できませんでした。",
-          error
-        );
+        console.error("共有ランキングの保存に失敗しました。", error);
+        setSyncStatus("スコアを保存できませんでした。", true);
       }
     }
 
@@ -1758,6 +1787,7 @@
         currentPlayerName;
 
       nameError.style.display = "none";
+      setSyncStatus("", false);
 
       try {
         localStorage.setItem(
@@ -1887,7 +1917,7 @@
       rewardElement.textContent =
         rewardData.reward;
 
-      saveRanking(score);
+      void saveRanking(score);
       closeRanking();
 
       endScreen.style.display =
@@ -1973,7 +2003,7 @@
     );
 
     checkImages();
-    loadRankingData();
+    void initializeSharedRanking();
   </script>
 </body>
 </html>

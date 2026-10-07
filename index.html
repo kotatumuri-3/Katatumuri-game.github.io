@@ -92,7 +92,7 @@
     }
 
     .panel {
-      min-width: 112px;
+      min-width: 0;
       padding: 9px 14px;
 
       color: #55c7e8;
@@ -137,8 +137,6 @@
         rgba(255, 249, 196, 0.95);
 
       pointer-events: auto;
-
-      /* グリッドの3列目に自然に収まる */
       justify-self: end;
     }
 
@@ -807,7 +805,7 @@
       overflow-x: hidden;
       overflow-y: scroll;
 
-      list-: none;
+      list-style: none;
 
       overscroll-behavior-y: contain;
       touch-action: pan-y !important;
@@ -903,31 +901,7 @@
         padding: 8px 5px;
       }
     }
-    @media (max-width: 480px) {
-      #header {
-        gap: 6px;
-      }
 
-      .panel {
-        min-width: 84px;
-        padding: 6px 8px;
-      }
-
-      .label {
-        font-size: 10px;
-      }
-
-      .value {
-        font-size: 18px;
-      }
-
-      #quit-button {
-        min-width: 60px;
-        min-height: 48px;
-        padding: 0 10px;
-        font-size: 14px;
-      }
-    }
     @media (max-width: 480px) {
       #header {
         gap: 6px;
@@ -986,16 +960,6 @@
         終了
       </button>
     </div>
-
-    <div id="player"></div>
-
-    <button
-      id="quit-button"
-      type="button"
-      aria-label="ゲームを終了する"
-    >
-      終了
-    </button>
 
     <div id="player"></div>
 

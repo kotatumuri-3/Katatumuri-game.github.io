@@ -899,6 +899,32 @@
         padding: 8px 5px;
       }
     }
+    @media (max-width: 480px) {
+      #header {
+        gap: 6px;
+      }
+
+      .panel {
+        min-width: 84px;
+        padding: 6px 8px;
+      }
+
+      .label {
+        font-size: 10px;
+      }
+
+      .value {
+        font-size: 18px;
+      }
+
+      #quit-button {
+        min-width: 60px;
+        min-height: 48px;
+        padding: 0 10px;
+        font-size: 14px;
+      }
+    }
+    
   </style>
 </head>
 
@@ -919,7 +945,17 @@
           <span id="time">30</span>秒
         </span>
       </div>
+
+      <button
+        id="quit-button"
+        type="button"
+        aria-label="ゲームを終了する"
+      >
+        終了
+      </button>
     </div>
+
+    <div id="player"></div>
 
     <button
       id="quit-button"

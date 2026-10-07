@@ -922,7 +922,6 @@
       </button>
     </div>
 
-    
     <div id="player"></div>
 
     <section
@@ -1129,10 +1128,10 @@
 
     const game =
       document.getElementById("game");
-    
+
     const quitButton =
       document.getElementById("quit-button");
-    
+
     const player =
       document.getElementById("player");
 
@@ -1942,6 +1941,20 @@
           rewardData = result;
         }
       }
+
+      messageElement.textContent =
+        rewardData.message;
+
+      rewardElement.textContent =
+        rewardData.reward;
+
+      void saveRanking(score);
+      closeRanking();
+
+      endScreen.style.display =
+        "flex";
+    }
+
     function quitGame() {
       if (!playing) {
         return;
@@ -1969,18 +1982,6 @@
       closeRanking();
 
       endScreen.style.display = "flex";
-    }
-      messageElement.textContent =
-        rewardData.message;
-
-      rewardElement.textContent =
-        rewardData.reward;
-
-      void saveRanking(score);
-      closeRanking();
-
-      endScreen.style.display =
-        "flex";
     }
 
     startButton.addEventListener(

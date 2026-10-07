@@ -807,7 +807,7 @@
       overflow-x: hidden;
       overflow-y: scroll;
 
-      list-style: none;
+      list-: none;
 
       overscroll-behavior-y: contain;
       touch-action: pan-y !important;
@@ -928,7 +928,35 @@
         font-size: 14px;
       }
     }
-    
+    @media (max-width: 480px) {
+      #header {
+        gap: 6px;
+        top: 8px;
+        right: 8px;
+        left: 8px;
+      }
+
+      .panel {
+        min-width: 0;
+        padding: 6px 8px;
+      }
+
+      .label {
+        font-size: 10px;
+      }
+
+      .value {
+        font-size: 18px;
+      }
+
+      #quit-button {
+        min-width: 58px;
+        min-height: 44px;
+        padding: 0 10px;
+        font-size: 14px;
+        border-radius: 12px;
+      }
+    }
   </style>
 </head>
 

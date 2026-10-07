@@ -111,7 +111,30 @@
     .value {
       font-size: 23px;
     }
+    #quit-button {
+      min-width: 74px;
+      min-height: 56px;
+      padding: 0 16px;
 
+      color: #269bbd;
+      font-size: 16px;
+      font-weight: 900;
+
+      border:
+        1px solid
+        rgba(85, 199, 232, 0.7);
+
+      border-radius: 16px;
+
+      background:
+        rgba(255, 249, 196, 0.95);
+
+      pointer-events: auto;
+    }
+
+    #quit-button:active {
+      transform: scale(0.96);
+    }
     #player {
       position: absolute;
       bottom: 25px;
@@ -889,8 +912,17 @@
           <span id="time">30</span>秒
         </span>
       </div>
+
+      <button
+        id="quit-button"
+        type="button"
+        aria-label="ゲームを終了する"
+      >
+        終了
+      </button>
     </div>
 
+    
     <div id="player"></div>
 
     <section
@@ -1097,7 +1129,10 @@
 
     const game =
       document.getElementById("game");
-
+    
+    const quitButton =
+      document.getElementById("quit-button");
+    
     const player =
       document.getElementById("player");
 
@@ -1907,7 +1942,34 @@
           rewardData = result;
         }
       }
+    function quitGame() {
+      if (!playing) {
+        return;
+      }
 
+      playing = false;
+
+      clearInterval(spawnTimer);
+      clearInterval(clockTimer);
+
+      cancelAnimationFrame(animationId);
+
+      for (const object of objects) {
+        object.element.remove();
+      }
+
+      objects = [];
+
+      finalScoreElement.textContent = score + "点";
+
+      messageElement.textContent = "ゲームを終了しました。";
+      rewardElement.textContent = "途中終了";
+
+      void saveRanking(score);
+      closeRanking();
+
+      endScreen.style.display = "flex";
+    }
       messageElement.textContent =
         rewardData.message;
 
@@ -1925,7 +1987,13 @@
       "click",
       startGame
     );
-
+    quitButton.addEventListener(
+      "click",
+      function (event) {
+        event.stopPropagation();
+        quitGame();
+      }
+    );
     retryButton.addEventListener(
       "click",
       startGame

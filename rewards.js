@@ -1,31 +1,31 @@
 const REWARDS = [
   {
+    minScore: 55,
+    message:
+      "めっちゃいいね☆",
+    reward:
+      "優秀賞"
+  },
+  {
     minScore: 30,
     message:
-      "最高記録クラスです！",
+      "いい感じ！",
     reward:
-      "ゴールド特典"
+      "有用賞"
   },
   {
-    minScore: 18,
+    minScore: 15,
     message:
-      "すばらしい記録です！",
+      "こうゆうときもあるよね",
     reward:
-      "シルバー特典"
-  },
-  {
-    minScore: 8,
-    message:
-      "いい調子です！",
-    reward:
-      "ブロンズ特典"
+      "頑張ったで賞"
   },
   {
     minScore: 0,
     message:
-      "もう一度挑戦してみよう！",
+      "もう一回挑戦しよう！",
     reward:
-      "参加特典"
+      "参加賞"
   }
 ];
 

@@ -111,7 +111,13 @@
     .value {
       font-size: 23px;
     }
+
     #quit-button {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 11;
+
       min-width: 74px;
       min-height: 56px;
       padding: 0 16px;
@@ -135,6 +141,7 @@
     #quit-button:active {
       transform: scale(0.96);
     }
+
     #player {
       position: absolute;
       bottom: 25px;
@@ -912,15 +919,15 @@
           <span id="time">30</span>秒
         </span>
       </div>
-
-      <button
-        id="quit-button"
-        type="button"
-        aria-label="ゲームを終了する"
-      >
-        終了
-      </button>
     </div>
+
+    <button
+      id="quit-button"
+      type="button"
+      aria-label="ゲームを終了する"
+    >
+      終了
+    </button>
 
     <div id="player"></div>
 
@@ -1988,6 +1995,21 @@
       "click",
       startGame
     );
+
+    quitButton.addEventListener(
+      "pointerdown",
+      function (event) {
+        event.stopPropagation();
+      }
+    );
+
+    quitButton.addEventListener(
+      "pointermove",
+      function (event) {
+        event.stopPropagation();
+      }
+    );
+
     quitButton.addEventListener(
       "click",
       function (event) {
@@ -1995,6 +2017,7 @@
         quitGame();
       }
     );
+
     retryButton.addEventListener(
       "click",
       startGame

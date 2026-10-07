@@ -79,8 +79,14 @@
       left: 12px;
       z-index: 10;
 
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        auto;
+
+      align-items: start;
+      gap: 8px;
 
       pointer-events: none;
     }
@@ -113,11 +119,6 @@
     }
 
     #quit-button {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 11;
-
       min-width: 74px;
       min-height: 56px;
       padding: 0 16px;
@@ -136,6 +137,9 @@
         rgba(255, 249, 196, 0.95);
 
       pointer-events: auto;
+
+      /* グリッドの3列目に自然に収まる */
+      justify-self: end;
     }
 
     #quit-button:active {

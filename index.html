@@ -252,6 +252,73 @@
       line-height: 1.6;
     }
 
+    .name-entry {
+      margin: 16px 0 12px;
+      padding: 14px;
+      text-align: left;
+      border: 2px solid rgba(85, 199, 232, 0.3);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .name-entry label {
+      display: block;
+      margin-bottom: 7px;
+      color: #299bbd;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    #player-name {
+      width: 100%;
+      min-height: 50px;
+      padding: 10px 14px;
+      color: #247f99;
+      font: inherit;
+      font-size: 18px;
+      font-weight: 800;
+      border: 2px solid rgba(85, 199, 232, 0.55);
+      border-radius: 14px;
+      outline: none;
+      background: white;
+      user-select: text;
+      -webkit-user-select: text;
+      touch-action: manipulation;
+    }
+
+    #player-name:focus {
+      border-color: #28add4;
+      box-shadow: 0 0 0 4px rgba(85, 199, 232, 0.16);
+    }
+
+    #name-error {
+      display: none;
+      margin: 7px 2px 0;
+      color: #d43838;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .podium-name {
+      display: block;
+      margin-top: 5px;
+      overflow: hidden;
+      color: #3c859a;
+      font-size: 13px;
+      font-weight: 900;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ranking-player {
+      overflow: hidden;
+      color: #387f94;
+      font-size: 14px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .rules {
       margin: 16px 0;
       padding: 12px;
@@ -704,7 +771,7 @@
     #ranking-list li {
       display: grid;
       grid-template-columns:
-        46px 1fr auto;
+        46px minmax(72px, 1fr) auto auto;
 
       align-items: center;
 
@@ -832,6 +899,19 @@
           ファイル名と保存場所を確認してください。
         </div>
 
+        <div class="name-entry">
+          <label for="player-name">プレイヤー名</label>
+          <input
+            id="player-name"
+            type="text"
+            maxlength="12"
+            autocomplete="nickname"
+            enterkeyhint="done"
+            placeholder="名前を入力（12文字まで）"
+          >
+          <p id="name-error">プレイヤー名を入力してください。</p>
+        </div>
+
         <div class="rules">
           <div class="rule-item">
             <img
@@ -954,7 +1034,7 @@
         ></div>
 
         <div class="ranking-list-label">
-          <span>順位・スコア</span>
+          <span>順位・名前・スコア</span>
           <span>プレイ日</span>
         </div>
 
@@ -1021,6 +1101,12 @@
     const retryButton =
       document.getElementById("retry-button");
 
+    const playerNameInput =
+      document.getElementById("player-name");
+
+    const nameError =
+      document.getElementById("name-error");
+
     const rankingStorageKey =
       "imageCatchGameRanking";
 
@@ -1035,6 +1121,7 @@
     let previousTime = 0;
 
     let fileRanking = [];
+    let currentPlayerName = "";
 
     const imageFiles = [
       "player.png",
@@ -1388,6 +1475,11 @@
                   )
                 ),
 
+              name:
+                String(
+                  record.name || "ななし"
+                ).slice(0, 12),
+
               playedAt:
                 String(
                   record.playedAt || ""
@@ -1414,6 +1506,7 @@
         getPlayedRanking();
 
       ranking.push({
+        name: currentPlayerName || "ななし",
         score: newScore,
 
         playedAt:
@@ -1491,6 +1584,17 @@
         rank.textContent =
           medals[index];
 
+        const nameText =
+          document.createElement("span");
+
+        nameText.className =
+          "podium-name";
+
+        nameText.textContent =
+          record
+            ? record.name
+            : "記録なし";
+
         const scoreText =
           document.createElement("span");
 
@@ -1514,6 +1618,7 @@
             : "記録なし";
 
         item.appendChild(rank);
+        item.appendChild(nameText);
         item.appendChild(scoreText);
         item.appendChild(dateText);
 
@@ -1561,6 +1666,15 @@
             rankText.textContent =
               position + "位";
 
+            const playerText =
+              document.createElement("span");
+
+            playerText.className =
+              "ranking-player";
+
+            playerText.textContent =
+              record.name;
+
             const scoreText =
               document.createElement("span");
 
@@ -1580,6 +1694,7 @@
               record.playedAt;
 
             item.appendChild(rankText);
+            item.appendChild(playerText);
             item.appendChild(scoreText);
             item.appendChild(dateText);
 
@@ -1627,6 +1742,33 @@
     }
 
     function startGame() {
+      const enteredName =
+        playerNameInput.value.trim();
+
+      if (!enteredName) {
+        nameError.style.display = "block";
+        playerNameInput.focus();
+        return;
+      }
+
+      currentPlayerName =
+        enteredName.slice(0, 12);
+
+      playerNameInput.value =
+        currentPlayerName;
+
+      nameError.style.display = "none";
+
+      try {
+        localStorage.setItem(
+          "imageCatchPlayerName",
+          currentPlayerName
+        );
+      }
+      catch (error) {
+        console.warn("プレイヤー名を保存できませんでした。", error);
+      }
+
       clearInterval(spawnTimer);
       clearInterval(clockTimer);
 
@@ -1805,6 +1947,28 @@
       },
       {
         passive: true
+      }
+    );
+
+    try {
+      const savedPlayerName =
+        localStorage.getItem("imageCatchPlayerName");
+
+      if (savedPlayerName) {
+        playerNameInput.value =
+          savedPlayerName.slice(0, 12);
+      }
+    }
+    catch (error) {
+      console.warn("プレイヤー名を読み込めませんでした。", error);
+    }
+
+    playerNameInput.addEventListener(
+      "input",
+      function () {
+        if (playerNameInput.value.trim()) {
+          nameError.style.display = "none";
+        }
       }
     );
 

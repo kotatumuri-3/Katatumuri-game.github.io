@@ -807,6 +807,7 @@
   </main>
 
   <!-- 特典設定を読み込む -->
+  <script src="ranking-data.js"></script>
   <script src="rewards.js"></script>
 
   <script>
@@ -880,35 +881,6 @@
     const rankingStorageKey =
       "imageCatchGameRanking";
 
-    let fileRanking = [];
-
-    async function loadRankingData() {
-      try {
-        const response = await fetch(
-          "scores.json?updated=" + Date.now(),
-          { cache: "no-store" }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            "scores.json: " + response.status
-          );
-        }
-
-        const data = await response.json();
-        fileRanking = Array.isArray(data)
-          ? data
-          : [];
-      }
-      catch (error) {
-        console.warn(
-          "scores.jsonを読み込めませんでした。",
-          error
-        );
-        fileRanking = [];
-      }
-    }
-
     let score = 0;
     let timeLeft = 30;
     let playing = false;
@@ -945,7 +917,6 @@
     }
 
     checkImages();
-    loadRankingData();
 
     function movePlayer(clientX) {
       if (!playing) {
@@ -1214,17 +1185,24 @@
     }
 
     function getRanking() {
+      const fileRanking =
+        typeof RANKING_DATA !== "undefined" &&
+        Array.isArray(RANKING_DATA)
+          ? RANKING_DATA
+          : [];
+
       let playedRanking = [];
 
       try {
-        const savedRanking = localStorage.getItem(
-          rankingStorageKey
-        );
+        const savedRanking =
+          localStorage.getItem(
+            rankingStorageKey
+          );
 
         if (savedRanking) {
-          const parsedRanking = JSON.parse(
-            savedRanking
-          );
+          const parsedRanking =
+            JSON.parse(savedRanking);
+
           if (Array.isArray(parsedRanking)) {
             playedRanking = parsedRanking;
           }
@@ -1245,7 +1223,8 @@
               0,
               Math.floor(Number(record.score) || 0)
             ),
-            playedAt: String(record.playedAt || "")
+            playedAt:
+              String(record.playedAt || "")
           };
         })
         .sort(function (first, second) {
@@ -1260,13 +1239,15 @@
       let playedRanking = [];
 
       try {
-        const savedRanking = localStorage.getItem(
-          rankingStorageKey
-        );
-        if (savedRanking) {
-          const parsedRanking = JSON.parse(
-            savedRanking
+        const savedRanking =
+          localStorage.getItem(
+            rankingStorageKey
           );
+
+        if (savedRanking) {
+          const parsedRanking =
+            JSON.parse(savedRanking);
+
           if (Array.isArray(parsedRanking)) {
             playedRanking = parsedRanking;
           }
@@ -1274,17 +1255,23 @@
 
         playedRanking.push({
           score: newScore,
-          playedAt: new Date().toLocaleDateString(
-            "ja-JP"
-          )
+          playedAt:
+            new Date().toLocaleDateString(
+              "ja-JP"
+            )
         });
-        playedRanking.sort(function (first, second) {
-          return second.score - first.score;
-        });
+
+        playedRanking.sort(
+          function (first, second) {
+            return second.score - first.score;
+          }
+        );
 
         localStorage.setItem(
           rankingStorageKey,
-          JSON.stringify(playedRanking.slice(0, 10))
+          JSON.stringify(
+            playedRanking.slice(0, 10)
+          )
         );
       }
       catch (error) {

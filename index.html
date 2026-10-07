@@ -82,6 +82,7 @@
       display: grid;
       grid-template-columns:
         minmax(0, 1fr)
+        minmax(0, 1fr)
         auto;
 
       align-items: start;
@@ -943,6 +944,14 @@
         <span class="value" id="score">0</span>
       </div>
 
+      <div class="panel">
+        <span class="label">経過時間</span>
+
+        <span class="value">
+          <span id="time">0</span>秒
+        </span>
+      </div>
+
       <button
         id="quit-button"
         type="button"
@@ -1168,6 +1177,9 @@
     const scoreElement =
       document.getElementById("score");
 
+    const timeElement =
+      document.getElementById("time");
+
     const startScreen =
       document.getElementById("start-screen");
 
@@ -1217,10 +1229,12 @@
 
 
     let score = 0;
+    let elapsedTime = 0;
     let playing = false;
 
     let objects = [];
     let spawnTimer;
+    let clockTimer;
     let animationId;
     let previousTime = 0;
 
@@ -1864,6 +1878,7 @@
       }
 
       clearInterval(spawnTimer);
+      clearInterval(clockTimer);
 
       cancelAnimationFrame(
         animationId
@@ -1878,8 +1893,10 @@
 
       objects = [];
       score = 0;
+      elapsedTime = 0;
 
       scoreElement.textContent = "0";
+      timeElement.textContent = "0";
       player.style.left = "50%";
 
       startScreen.style.display =
@@ -1906,6 +1923,20 @@
           620
         );
 
+      clockTimer =
+        setInterval(
+          function () {
+            if (!playing) {
+              return;
+            }
+
+            elapsedTime += 1;
+            timeElement.textContent =
+              elapsedTime;
+          },
+          1000
+        );
+
       animationId =
         requestAnimationFrame(update);
     }
@@ -1918,6 +1949,7 @@
       playing = false;
 
       clearInterval(spawnTimer);
+      clearInterval(clockTimer);
 
       cancelAnimationFrame(
         animationId
@@ -1979,6 +2011,7 @@
       playing = false;
 
       clearInterval(spawnTimer);
+      clearInterval(clockTimer);
 
       cancelAnimationFrame(animationId);
 

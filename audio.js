@@ -111,4 +111,216 @@ const bgmEngine = {
 
 async function loadAudioArrayBuffer(url) {
   const response = await fetch(url);
-  if
+  if (!response.ok) {
+    throw new Error("BGMの読み込みに失敗: " + url + " (" + response.status + ")");
+  }
+  return response.arrayBuffer();
+}
+
+async function decodeBgmBuffers() {
+  if (bgmEngine.decoded) return true;
+  if (bgmEngine.decoding) return bgmEngine.decoding;
+
+  bgmEngine.decoding = (async function () {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return false;
+
+      const [normalArr, bonusArr] = await Promise.all([
+        loadAudioArrayBuffer(BGM_NORMAL_URL),
+        loadAudioArrayBuffer(BGM_BONUS_URL)
+      ]);
+
+      const [normalBuf, bonusBuf] = await Promise.all([
+        new Promise(function (resolve, reject) {
+          ctx.decodeAudioData(normalArr, resolve, reject);
+        }),
+        new Promise(function (resolve, reject) {
+          ctx.decodeAudioData(bonusArr, resolve, reject);
+        })
+      ]);
+
+      bgmEngine.normalBuffer = normalBuf;
+      bgmEngine.bonusBuffer = bonusBuf;
+      bgmEngine.decoded = true;
+      return true;
+    }
+    catch (error) {
+      console.warn("BGMのデコードに失敗しました。", error);
+      return false;
+    }
+    finally {
+      bgmEngine.decoding = null;
+    }
+  })();
+
+  return bgmEngine.decoding;
+}
+
+function fadeGain(gainNode, target, durationMs, onComplete) {
+  if (!gainNode) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const startValue = gainNode.gain.value;
+  const durationSec = durationMs / 1000;
+
+  gainNode.gain.cancelScheduledValues(now);
+  gainNode.gain.setValueAtTime(startValue, now);
+  gainNode.gain.linearRampToValueAtTime(target, now + durationSec);
+
+  if (typeof onComplete === "function") {
+    setTimeout(onComplete, durationMs + 30);
+  }
+}
+
+function createLoopSource(buffer, gain) {
+  const ctx = getAudioContext();
+  if (!ctx || !buffer) return null;
+
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(0);
+  return source;
+}
+
+async function startBgmNormal() {
+  if (!soundEnabled) return;
+
+  if (bgmEngine.bonusSource && bgmEngine.bonusGain) {
+    const bonusSource = bgmEngine.bonusSource;
+    const bonusGain = bgmEngine.bonusGain;
+    bgmEngine.bonusSource = null;
+    bgmEngine.bonusGain = null;
+
+    fadeGain(bonusGain, 0, 400, function () {
+      try { bonusSource.stop(); } catch (e) {}
+    });
+  }
+
+  const ok = await decodeBgmBuffers();
+  if (!ok) return;
+
+  if (bgmEngine.normalSource) {
+    fadeGain(bgmEngine.normalGain, bgmEngine.normalVolume, 600);
+    return;
+  }
+
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0;
+
+  const source = createLoopSource(bgmEngine.normalBuffer, gain);
+  if (!source) return;
+
+  bgmEngine.normalSource = source;
+  bgmEngine.normalGain = gain;
+
+  fadeGain(gain, bgmEngine.normalVolume, 600);
+}
+
+async function startBgmBonus() {
+  if (!soundEnabled) return;
+
+  if (bgmEngine.normalSource && bgmEngine.normalGain) {
+    const normalSource = bgmEngine.normalSource;
+    const normalGain = bgmEngine.normalGain;
+    bgmEngine.normalSource = null;
+    bgmEngine.normalGain = null;
+
+    fadeGain(normalGain, 0, 400, function () {
+      try { normalSource.stop(); } catch (e) {}
+    });
+  }
+
+  const ok = await decodeBgmBuffers();
+  if (!ok) return;
+
+  if (bgmEngine.bonusSource) {
+    fadeGain(bgmEngine.bonusGain, bgmEngine.bonusVolume, 400);
+    return;
+  }
+
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0;
+
+  const source = createLoopSource(bgmEngine.bonusBuffer, gain);
+  if (!source) return;
+
+  bgmEngine.bonusSource = source;
+  bgmEngine.bonusGain = gain;
+
+  fadeGain(gain, bgmEngine.bonusVolume, 400);
+}
+
+function stopAllBgm() {
+  if (bgmEngine.normalSource && bgmEngine.normalGain) {
+    const normalSource = bgmEngine.normalSource;
+    const normalGain = bgmEngine.normalGain;
+    bgmEngine.normalSource = null;
+    bgmEngine.normalGain = null;
+
+    fadeGain(normalGain, 0, 500, function () {
+      try { normalSource.stop(); } catch (e) {}
+    });
+  }
+
+  if (bgmEngine.bonusSource && bgmEngine.bonusGain) {
+    const bonusSource = bgmEngine.bonusSource;
+    const bonusGain = bgmEngine.bonusGain;
+    bgmEngine.bonusSource = null;
+    bgmEngine.bonusGain = null;
+
+    fadeGain(bonusGain, 0, 500, function () {
+      try { bonusSource.stop(); } catch (e) {}
+    });
+  }
+}
+
+function pauseAllBgm() {
+  if (bgmEngine.normalGain) bgmEngine.normalGain.gain.value = 0;
+  if (bgmEngine.bonusGain)  bgmEngine.bonusGain.gain.value  = 0;
+}
+
+function resumeCurrentBgm(bonusTimeActive) {
+  if (bonusTimeActive) {
+    if (bgmEngine.bonusGain) fadeGain(bgmEngine.bonusGain, bgmEngine.bonusVolume, 400);
+  }
+  else {
+    if (bgmEngine.normalGain) fadeGain(bgmEngine.normalGain, bgmEngine.normalVolume, 400);
+  }
+}
+
+// ===== モジュールスクリプト（main.js）から参照できるようグローバル化 =====
+window.getAudioContext = getAudioContext;
+window.playBeep = playBeep;
+window.playNormalSound = playNormalSound;
+window.playBonusSound = playBonusSound;
+window.playBombSound = playBombSound;
+window.playStartSound = playStartSound;
+window.playGameOverSound = playGameOverSound;
+window.playQuitSound = playQuitSound;
+window.playBonusTimeSound = playBonusTimeSound;
+window.playBonusTimeEndSound = playBonusTimeEndSound;
+
+window.startBgmNormal = startBgmNormal;
+window.startBgmBonus  = startBgmBonus;
+window.stopAllBgm     = stopAllBgm;
+window.pauseAllBgm    = pauseAllBgm;
+window.resumeCurrentBgm = resumeCurrentBgm;
+window.decodeBgmBuffers = decodeBgmBuffers;
+
+// soundEnabled のゲッター／セッター（main.js から読み書きできるように）
+Object.defineProperty(window, "soundEnabled", {
+  get: function () { return soundEnabled; },
+  set: function (v) { soundEnabled = v; }
+});
